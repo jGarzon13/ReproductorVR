@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verano Delfin</title>
+    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+    <script>
+        AFRAME.registerComponent('play-pause', {
+            init: function() {
+                var miVideo = document.querySelector('#penguin-sledding');
+                var videoControls = document.querySelector('#videoControls');
+                var isPlaying = false;
+                var videoSources = ["pedro.mp4", "top.mp4", "mosolin.mp4"]; // Lista de videos
+                var currentVideoIndex = 0;
+
+    
+                function nextVideo() {
+                    currentVideoIndex = (currentVideoIndex + 1) % videoSources.length;
+                    miVideo.setAttribute('src', videoSources[currentVideoIndex]);
+                    miVideo.play();
+                    isPlaying = true;
+                    videoControls.setAttribute('src', "#pause");
+                }
+
+     
+                function previousVideo() {
+                    currentVideoIndex = (currentVideoIndex - 1 + videoSources.length) % videoSources.length;
+                    miVideo.setAttribute('src', videoSources[currentVideoIndex]);
+                    miVideo.play();
+                    isPlaying = true;
+                    videoControls.setAttribute('src', "#pause");
+                }
+
+                // Registrar eventos de teclas
+                window.addEventListener('keydown', function(evt) {
+                    if (evt.code === 'Space') {
+                        if (isPlaying) {
+                            miVideo.pause();
+                            videoControls.setAttribute('src', "#play");
+                        } else {
+                            miVideo.play();
+                            videoControls.setAttribute('src', "#pause");
+                        }
+                        isPlaying = !isPlaying;
+                    } else if (evt.code === 'KeyN') { 
+                        nextVideo();
+                    } else if (evt.code === 'KeyB') { 
+                        previousVideo();
+                    }
+                });
+
+                // Requiere un primer clic para iniciar el video con sonido en algunos navegadores
+                window.addEventListener('click', function() {
+                    miVideo.play();
+                    miVideo.pause();
+                    window.removeEventListener('click', arguments.callee);
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+    <a-scene>
+        <a-assets>
+            <img id="play" src="play.png">
+            <img id="pause" src="pause.png">
+            <video id="penguin-sledding" loop="true" src="pedro.mp4" ></video>
+        </a-assets>
+
+        <a-video src="#penguin-sledding" width="16" height="9" position="0 0 -7">
+            <a-image id="videoControls" src="#play" position="0 -7 0" play-pause ></a-image>
+        </a-video>
+    </a-scene>
+</body>
+</html>
